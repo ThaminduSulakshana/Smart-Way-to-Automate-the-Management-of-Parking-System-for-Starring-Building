@@ -40,8 +40,7 @@ Managing parking systems in modern urban environments has become increasingly co
 - **[Solidity](https://soliditylang.org/)**: Programming language used to develop smart contracts for automating parking fee calculations and vehicle registration on the blockchain.  
 - **[Sepolia Testnet](https://sepolia.net/)**: Ethereum test network where the smart contract was deployed for testing and validation of transaction processes.  
 - **[MetaMask](https://metamask.io/)**: Cryptocurrency wallet integrated with the Sepolia Testnet to interact with the blockchain for transaction processes.  
-- **[Faucet](https://sepoliafaucet.com/)**: Used to mine test funds on Sepolia Testnet for conducting transactions during smart contract testing.  
-- **[Ethereum](https://ethereum.org/)**: A decentralized platform used for deploying the smart contract and recording transactions on the blockchain.
+- **[Faucet](https://sepoliafaucet.com/)**: Used to mine test funds on Sepolia Testnet for conducting transactions during smart contract testing. 
 
 ### Data Dependencies  
 
