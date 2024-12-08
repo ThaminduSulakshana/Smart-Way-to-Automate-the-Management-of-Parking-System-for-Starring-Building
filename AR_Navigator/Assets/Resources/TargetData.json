@@ -1,0 +1,116 @@
+{
+	"TargetList": [
+		{
+			"Name": " ",
+			"FloorNumber": 0,
+			"Position": {
+				"x": -4.49,
+				"y": 0.00,
+				"z": -1.99
+			},
+			"Rotation": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			}
+		},
+		{
+			"Name": "P1",
+			"FloorNumber": 0,
+			"Position": {
+				"x": 6.29,
+				"y": 0.00,
+				"z": -34.26
+			},
+			"Rotation": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			}
+		},
+		{
+			"Name": "P2",
+			"FloorNumber": 0,
+			"Position": {
+				"x": 6.29,
+				"y": 0.00,
+				"z": -31.52
+			},
+			"Rotation": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			}
+		},
+		{
+			"Name": "P3",
+			"FloorNumber": 0,
+			"Position": {
+				"x": 6.29,
+				"y": 0.00,
+				"z": -28.75
+			},
+			"Rotation": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			}
+		},
+		{
+			"Name": "P4",
+			"FloorNumber": 0,
+			"Position": {
+				"x": 6.29,
+				"y": 0.00,
+				"z": -25.84
+			},
+			"Rotation": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			}
+		},
+		{
+			"Name": "P5",
+			"FloorNumber": 0,
+			"Position": {
+				"x": 6.29,
+				"y": 0.00,
+				"z": -23
+			},
+			"Rotation": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			}
+		},
+		{
+			"Name": "P6",
+			"FloorNumber": 0,
+			"Position": {
+				"x": 6.29,
+				"y": 0.00,
+				"z": -17.62
+			},
+			"Rotation": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			}
+		},
+		{
+			"Name": "P7",
+			"FloorNumber": 0,
+			"Position": {
+				"x": 6.29,
+				"y": 0.00,
+				"z": -13.92
+			},
+			"Rotation": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			}
+		}
+	]
+}
