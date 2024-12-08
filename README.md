@@ -1,9 +1,8 @@
 # Smart Way to Automate the Management of Parking System for Starring Building
 
-## Project Overview
-The **Smart Automated Parking Management System for Starring Building** is designed to address challenges in traditional parking facilities by integrating advanced technologies such as computer vision, augmented reality (AR), and blockchain. This system aims to enhance efficiency, reduce congestion, and provide a seamless user experience through automated parking slot detection, real-time navigation, vehicle identification, rule enforcement, and secure payment processing.
 
-Modern urban environments require innovative solutions that optimize space usage, reduce congestion, and enhance user convenience. By integrating real-time data, automated systems can address these challenges and provide a seamless experience for users.
+## Overview  
+The **Smart Automated Parking Management System** for Starring Building leverages advanced technologies such as computer vision, augmented reality (AR), and blockchain to optimize parking operations, reduce congestion, and enhance user experience. This system automates parking slot detection, real-time navigation, vehicle identification, and rule enforcement while providing secure and seamless payment processing.  
 
 
 ## Research Problem
@@ -21,5 +20,76 @@ Managing parking systems in modern urban environments has become increasingly co
 
 ## Architectural Diagram
 > ![System Architecture](https://github.com/user-attachments/assets/c1d4e9d7-1bb6-4ace-8479-7bd5c8aaa3ef)  
+
+---
+
+## Dependencies  
+
+### Core Technologies  
+- **[Python Flask](https://flask.palletsprojects.com/)**: Backend API framework.  
+- **[OpenCV](https://opencv.org/)**: For parking slot detection and license plate recognition.  
+- **[Unity](https://unity.com/)**: Platform for developing AR navigation applications.  
+- **[AR Foundation](https://unity.com/ar-foundation)**: Framework for AR development on Unity.  
+- **[React Native](https://reactnative.dev/)**: For mobile app development.    
+
+### Machine Learning  
+- **[TensorFlow](https://www.tensorflow.org/)** / **[PyTorch](https://pytorch.org/)**: Frameworks for deep learning models.  
+- **[YOLOv5](https://github.com/ultralytics/yolov5)**: Object detection algorithm used to train models for detecting cars and parking slot boundaries.  
+
+### Blockchain  
+- **[Solidity](https://soliditylang.org/)**: Programming language used to develop smart contracts for automating parking fee calculations and vehicle registration on the blockchain.  
+- **[Sepolia Testnet](https://sepolia.net/)**: Ethereum test network where the smart contract was deployed for testing and validation of transaction processes.  
+- **[MetaMask](https://metamask.io/)**: Cryptocurrency wallet integrated with the Sepolia Testnet to interact with the blockchain for transaction processes.  
+- **[Faucet](https://sepoliafaucet.com/)**: Used to mine test funds on Sepolia Testnet for conducting transactions during smart contract testing.  
+- **[Ethereum](https://ethereum.org/)**: A decentralized platform used for deploying the smart contract and recording transactions on the blockchain.
+
+### Data Dependencies  
+
+- **[Parking Line Dataset](https://universe.roboflow.com/patterns-mq36m/parking-line-7bckr/dataset/1)**: Dataset used for training models to detect parking lines and boundaries.  
+- **[Roboflow](https://roboflow.com/)**: Tool used for dataset annotation, managing parking-related datasets such as parking slot detection and vehicle classification.  
+- **[COCO Dataset](https://cocodataset.org/)**: Used for general object detection, including parking-related objects like vehicles.  
+- **[Open Images Dataset](https://storage.googleapis.com/openimages/web/index.html)**: Used for object detection training, which includes vehicle and parking area annotations.  
+- **Custom Datasets**: Data collected and annotated for additional parking scenarios such as blocking driveways and parking in no-parking zones.  
+
+### General Utilities  
+- **[Git](https://git-scm.com/)**: Version control.  
+
+## Repository Structure  
+```plaintext  
+/Smart Way to Automate the Management of Parking System for Starring Building
+├── /backend/             # Backend API and ML models  
+├── /ar_navigation/       # Unity project for AR-based navigation  
+├── /mobile_app/          # Flutter project for mobile app  
+├── /docs/                # Documentation and diagrams  
+├── /tests/               # Testing and simulation scripts  
+└── README.md             # Project overview  
+```  
+## Getting Started  
+
+### Clone the Repository  
+```bash  
+git clone https://github.com/<your-username>/smart-parking-ar-navigation.git  
+cd smart-parking-ar-navigation  
+```  
+
+### Install Dependencies  
+#### Backend  
+```bash  
+pip install -r backend/requirements.txt  
+```  
+
+#### Unity AR Project  
+Dependencies for AR navigation are managed via Unity Package Manager.  
+
+### Run the System  
+1. Start the backend server:  
+   ```bash  
+   cd backend  
+   python app.py  
+   ```  
+2. Open `/ar_navigation/` in Unity and deploy the AR app to a compatible smartphone.  
+
+
+---
 
 This project is licensed under the [MIT License](LICENSE).
