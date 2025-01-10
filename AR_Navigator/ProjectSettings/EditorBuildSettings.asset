@@ -6,9 +6,16 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/IndoorNavigation.unity
-    guid: f88006bc963ef4049a942a46ef8e1f7f
+    path: Assets/Scenes/SampleScene.unity
+    guid: c850ee8c3b14cc8459e7e186857cf567
   m_configObjects:
-    UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: a4443e2a28d928f4ab37bcf093a887d7, type: 2}
-    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 5d9b8af6b4d8b484cb49d04c365cc8cb, type: 2}
-    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 46962b2d8c21e86428519251dd8fa0dc, type: 2}
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: e49500faf694097439c46b96e463c89f,
+      type: 2}
+    com.unity.adaptiveperformance.samsung.android.provider_settings: {fileID: 11400000,
+      guid: 308b5164b3d0eb84f8204ad3395ee9ce, type: 2}
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000,
+      guid: 75ad82e7e4c4b774ebf7ef21e8e5aac8, type: 2}
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: e617c1d578c682e4285c6168237d7dd0,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 074e822eeafbd0b428c569a4af48b84e,
+      type: 2}
