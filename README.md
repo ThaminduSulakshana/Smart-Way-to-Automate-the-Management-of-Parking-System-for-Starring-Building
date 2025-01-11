@@ -17,7 +17,7 @@ Managing parking systems in modern urban environments has become increasingly co
 > - **Real-time Parking Slot Detection**: Uses cameras to monitor slot occupancy and provide real-time updates.
 > - **Augmented Reality Navigation**: Guides drivers to available parking slots through AR visual guidance via mobile app.
 > - **Parking Violations and Fines Management**: Automatic detection and enforcement of parking violations and automatically issues fines.
-> - **Blockchain-based Payment System**: Calculates parking fees based on time parked and payments are processed securely through mobile app, credit cards, and contactless payments.
+> - **Blockchain-based Payment System**: Calculates parking fees based on time parked and payments are processed securely through digital wallet integrated in the mobile app.
 
 ## Architectural Diagram
 > ![System Architecture](https://github.com/user-attachments/assets/c1d4e9d7-1bb6-4ace-8479-7bd5c8aaa3ef)  
