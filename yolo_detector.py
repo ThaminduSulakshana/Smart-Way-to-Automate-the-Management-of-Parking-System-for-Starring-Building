@@ -90,7 +90,7 @@ def detect_frame(frame, model_data, conf_thres=0.25, iou_thres=0.45, line_ratio=
     # If no horizontal line was detected in any object, optionally treat all recognized plates as violation.
     if not any([y2 > line_y for det in pred if det is not None for *xyxy, conf, cls in det]):
         # Optionally uncomment the next line if you want all plates to be flagged as violation when no line is detected.
-        # plate_violations = list(set(recognized_plates))
+        plate_violations = list(set(recognized_plates))
         pass
 
     return annotator.result(), recognized_plates, plate_violations
@@ -155,7 +155,7 @@ def send_violation_notification(plate_text):
     Sends an API notification when a plate remains in violation for >= 10 seconds.
     Adjust the endpoint as needed.
     """
-    notification_endpoint = "http://localhost:3000/"  # Replace with your actual endpoint
+    notification_endpoint = "http://localhost:3000/"  
     data = {"plate": plate_text, "message": "Violation detected"}
     if plate_text.lower() == "ub cbc 7716":
         data["message"] = "Special violation alert for UB CBC 7716"
