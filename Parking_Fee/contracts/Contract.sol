@@ -2,21 +2,30 @@
 pragma solidity ^0.8.0;
 
 contract ParkingFeeSystem {
-    struct VehicleInfo {
-        string vehicleNumber;
+    struct UserInfo {
         string userName;
         address walletAddress;
-        uint256 parkingHours; // Parking hours for this vehicle
-        uint256 totalFee;     // Total calculated fee for parking
+        bool registered; // To track if the user is registered
     }
 
-    mapping(address => VehicleInfo[]) public userVehicles; // User's multiple vehicles
-    mapping(address => uint256) public balances;           // User balances for parking fees
-    address public owner;                                  // Contract owner (admin)
-    uint256 public feeRatePerHour;                         // Fee rate per hour in Wei
+    struct VehicleInfo {
+        string vehicleNumber;
+        uint256 parkingHours; // Parking hours for this vehicle
+        uint256 totalFee;     // Total calculated fee for parking
+        uint256 totalFine;    // Total fines incurred for parking violations
+        bool feePaid;         // Indicates if the fee has been paid
+    }
 
-    event VehicleRegistered(address indexed user, string vehicleNumber);
+    mapping(address => UserInfo) public users;            // Mapping to store user information
+    mapping(address => VehicleInfo[]) public userVehicles; // Mapping to store user's multiple vehicles
+    mapping(address => uint256) public balances;          // Mapping to store user balances for parking fees
+    address public owner;                                 // Contract owner (admin)
+    uint256 public feeRatePerHour;                        // Fee rate per hour in Wei
+    uint256 public fineAmount = 5 * 10**18;               // Fine amount (5 dollars in Wei)
+
+    event UserAndVehicleRegistered(address indexed user, string userName, string vehicleNumber);
     event ParkingHoursSet(address indexed user, string vehicleNumber, uint256 parkingHours, uint256 fee);
+    event FineAdded(address indexed user, string vehicleNumber, uint256 fineAmount);
     event FeePaid(address indexed user, string vehicleNumber, uint256 amount);
     event BalanceDeposited(address indexed user, uint256 amount);
     event BalanceWithdrawn(address indexed user, uint256 amount);
@@ -27,61 +36,111 @@ contract ParkingFeeSystem {
         _;
     }
 
+    modifier onlyRegisteredUser() {
+        require(users[msg.sender].registered, "User not registered");
+        _;
+    }
+
     constructor(uint256 _feeRatePerHour) {
         owner = msg.sender; // Set the deployer as the owner
         feeRatePerHour = _feeRatePerHour; // Initialize fee rate in Wei
     }
 
     /**
-     * @notice Register a vehicle for the caller
-     * @param _vehicleNumber The vehicle number to register
+     * @notice Register a new user and their vehicle details (Owner-only)
+     * @param _userAddress The address of the user
      * @param _userName The user's name
+     * @param _vehicleNumber The vehicle number to register
      */
-    function registerVehicle(string memory _vehicleNumber, string memory _userName) public {
-        require(bytes(_vehicleNumber).length > 0, "Vehicle number cannot be empty");
+    function registerUserAndVehicle(
+        address _userAddress,
+        string memory _userName,
+        string memory _vehicleNumber
+    ) public onlyOwner {
+        require(_userAddress != address(0), "Invalid user address");
         require(bytes(_userName).length > 0, "User name cannot be empty");
+        require(bytes(_vehicleNumber).length > 0, "Vehicle number cannot be empty");
+        require(!users[_userAddress].registered, "User already registered");
+
+        // Register the user
+        users[_userAddress] = UserInfo({
+            userName: _userName,
+            walletAddress: _userAddress,
+            registered: true
+        });
+
+        // Add the vehicle
+        userVehicles[_userAddress].push(
+            VehicleInfo({
+                vehicleNumber: _vehicleNumber,
+                parkingHours: 0,
+                totalFee: 0,
+                totalFine: 0,
+                feePaid: false
+            })
+        );
+
+        emit UserAndVehicleRegistered(_userAddress, _userName, _vehicleNumber);
+    }
+
+    /**
+     * @notice Add a new vehicle for a registered user (Owner-only)
+     * @param _userAddress The address of the vehicle owner
+     * @param _vehicleNumber The vehicle number to add
+     */
+    function addVehicle(address _userAddress, string memory _vehicleNumber) public onlyOwner {
+        require(users[_userAddress].registered, "User not registered");
+        require(bytes(_vehicleNumber).length > 0, "Vehicle number cannot be empty");
 
         // Check if the vehicle number is already registered for this user
-        for (uint256 i = 0; i < userVehicles[msg.sender].length; i++) {
+        VehicleInfo[] storage vehicles = userVehicles[_userAddress];
+        for (uint256 i = 0; i < vehicles.length; i++) {
             require(
-                keccak256(bytes(userVehicles[msg.sender][i].vehicleNumber)) != keccak256(bytes(_vehicleNumber)),
+                keccak256(bytes(vehicles[i].vehicleNumber)) != keccak256(bytes(_vehicleNumber)),
                 "Vehicle already registered"
             );
         }
 
-        // Add a new vehicle to the user's list
-        userVehicles[msg.sender].push(
+        // Add the new vehicle
+        vehicles.push(
             VehicleInfo({
                 vehicleNumber: _vehicleNumber,
-                userName: _userName,
-                walletAddress: msg.sender,
                 parkingHours: 0,
-                totalFee: 0
+                totalFee: 0,
+                totalFine: 0,
+                feePaid: false
             })
         );
 
-        emit VehicleRegistered(msg.sender, _vehicleNumber);
+        emit UserAndVehicleRegistered(_userAddress, users[_userAddress].userName, _vehicleNumber);
     }
 
     /**
-     * @notice Set parking hours for a specific vehicle
+     * @notice Assign parking hours and calculate fees for a user's vehicle (Owner-only)
+     * @param _userAddress The user's address
      * @param _vehicleNumber The vehicle number
-     * @param parkingHours The number of hours the vehicle will be parked
+     * @param _parkingHours The number of hours the vehicle will be parked
      */
-    function setParkingHours(string memory _vehicleNumber, uint256 parkingHours) public {
-        require(parkingHours > 0, "Parking hours must be greater than zero");
+    function assignParkingHours(
+        address _userAddress,
+        string memory _vehicleNumber,
+        uint256 _parkingHours
+    ) public onlyOwner {
+        require(users[_userAddress].registered, "User not registered");
+        require(_parkingHours > 0, "Parking hours must be greater than zero");
 
         // Find the vehicle by its number
-        VehicleInfo[] storage vehicles = userVehicles[msg.sender];
+        VehicleInfo[] storage vehicles = userVehicles[_userAddress];
         bool vehicleFound = false;
 
         for (uint256 i = 0; i < vehicles.length; i++) {
             if (keccak256(bytes(vehicles[i].vehicleNumber)) == keccak256(bytes(_vehicleNumber))) {
-                vehicles[i].parkingHours = parkingHours;
-                vehicles[i].totalFee = parkingHours * feeRatePerHour; // Calculate the total fee
+                vehicles[i].parkingHours = _parkingHours;
+                vehicles[i].totalFee = _parkingHours * feeRatePerHour; // Calculate the total fee
+                vehicles[i].feePaid = false;
                 vehicleFound = true;
 
-                emit ParkingHoursSet(msg.sender, _vehicleNumber, parkingHours, vehicles[i].totalFee);
+                emit ParkingHoursSet(_userAddress, _vehicleNumber, _parkingHours, vehicles[i].totalFee);
                 break;
             }
         }
@@ -90,28 +149,56 @@ contract ParkingFeeSystem {
     }
 
     /**
-     * @notice Pay the parking fee for a specific vehicle
+     * @notice Add a parking violation fine for a user's vehicle (Owner-only)
+     * @param _userAddress The user's address
      * @param _vehicleNumber The vehicle number
      */
-    function payFee(string memory _vehicleNumber) public {
+    function addFine(address _userAddress, string memory _vehicleNumber) public onlyOwner {
+        require(users[_userAddress].registered, "User not registered");
+
+        // Find the vehicle by its number
+        VehicleInfo[] storage vehicles = userVehicles[_userAddress];
+        bool vehicleFound = false;
+
+        for (uint256 i = 0; i < vehicles.length; i++) {
+            if (keccak256(bytes(vehicles[i].vehicleNumber)) == keccak256(bytes(_vehicleNumber))) {
+                vehicles[i].totalFine += fineAmount; // Add fine to the vehicle
+                vehicleFound = true;
+
+                emit FineAdded(_userAddress, _vehicleNumber, fineAmount);
+                break;
+            }
+        }
+
+        require(vehicleFound, "Vehicle not found");
+    }
+
+    /**
+     * @notice Pay the total parking fee and fines for a specific vehicle
+     * @param _vehicleNumber The vehicle number
+     */
+    function payFee(string memory _vehicleNumber) public onlyRegisteredUser {
         VehicleInfo[] storage vehicles = userVehicles[msg.sender];
         bool vehicleFound = false;
 
         for (uint256 i = 0; i < vehicles.length; i++) {
             if (keccak256(bytes(vehicles[i].vehicleNumber)) == keccak256(bytes(_vehicleNumber))) {
-                require(vehicles[i].totalFee > 0, "No fee to pay");
-                require(balances[msg.sender] >= vehicles[i].totalFee, "Insufficient balance to pay the fee");
+                uint256 totalAmount = vehicles[i].totalFee + vehicles[i].totalFine;
+                require(!vehicles[i].feePaid, "Fee already paid");
+                require(totalAmount > 0, "No dues to pay");
+                require(balances[msg.sender] >= totalAmount, "Insufficient balance to pay the fee");
 
-                // Deduct the fee from the user's balance
-                balances[msg.sender] -= vehicles[i].totalFee;
+                // Deduct the total amount from the user's balance
+                balances[msg.sender] -= totalAmount;
 
-                // Reset parking hours and fee after payment
-                vehicles[i].parkingHours = 0;
+                // Mark the fee as paid and reset fines
+                vehicles[i].feePaid = true;
                 vehicles[i].totalFee = 0;
+                vehicles[i].totalFine = 0;
 
                 vehicleFound = true;
 
-                emit FeePaid(msg.sender, _vehicleNumber, vehicles[i].totalFee);
+                emit FeePaid(msg.sender, _vehicleNumber, totalAmount);
                 break;
             }
         }
@@ -122,48 +209,9 @@ contract ParkingFeeSystem {
     /**
      * @notice Deposit funds into the user's balance
      */
-    function depositBalance() public payable {
+    function depositBalance() public payable onlyRegisteredUser {
         require(msg.value > 0, "Deposit amount must be greater than zero");
         balances[msg.sender] += msg.value;
         emit BalanceDeposited(msg.sender, msg.value);
-    }
-
-    /**
-     * @notice Withdraw remaining balance from the user's account
-     */
-    function withdrawBalance() public {
-        uint256 amount = balances[msg.sender];
-        require(amount > 0, "No balance to withdraw");
-
-        balances[msg.sender] = 0;
-        payable(msg.sender).transfer(amount);
-        emit BalanceWithdrawn(msg.sender, amount);
-    }
-
-    /**
-     * @notice Admin withdraws collected fees
-     */
-    function withdrawCollectedFees() public onlyOwner {
-        uint256 amount = address(this).balance;
-        require(amount > 0, "No fees to withdraw");
-
-        payable(owner).transfer(amount);
-        emit OwnerWithdrawn(amount);
-    }
-
-    /**
-     * @notice Change the hourly fee rate (admin-only)
-     * @param _newFeeRate The new fee rate per hour
-     */
-    function setFeeRate(uint256 _newFeeRate) public onlyOwner {
-        feeRatePerHour = _newFeeRate;
-    }
-
-    /**
-     * @notice Retrieve user's parking info for all vehicles
-     * @param _user The address of the user
-     */
-    function getVehicleInfo(address _user) public view returns (VehicleInfo[] memory) {
-        return userVehicles[_user];
     }
 }
